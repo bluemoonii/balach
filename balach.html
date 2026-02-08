@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Valach Aaron de Cycair</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;600&family=Noto+Serif+KR&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    background:#0a0a0c;
+    color:#e8e4dd;
+    font-family:'Cormorant Garamond','Noto Serif KR',serif;
+    overflow-x:hidden;
+}
+
+/* 심장 박동 암전 */
+@keyframes heartbeat {
+    0%,100%{opacity:0.85;}
+    50%{opacity:1;}
+}
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.92);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:40px;
+    z-index:999;
+    animation:heartbeat 2s infinite;
+    cursor:pointer;
+}
+
+.overlay .text{
+    max-width:900px;
+    font-size:26px;
+    line-height:2.2;
+    color:#d8c3a0;
+    white-space:pre-line;
+}
+
+.hero{
+    height:100vh;
+    background:
+    linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.95)),
+    url('발라크4.png') center/cover no-repeat;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+.title{
+    font-family:'Cinzel', serif;
+    font-size:68px;
+    letter-spacing:8px;
+    color:#d6c3a1;
+}
+
+.subtitle{
+    margin-top:25px;
+    font-family:'Cinzel', serif;
+    font-size:28px;
+    color:#9e8766;
+    letter-spacing:4px;
+}
+
+.gallery{
+    display:flex;
+    justify-content:center;
+    gap:70px;
+    margin:140px 0;
+    flex-wrap:wrap;
+}
+
+.gallery img{
+    width:380px;
+    border:1px solid #2a2a2a;
+    box-shadow:0 0 50px rgba(0,0,0,0.9);
+    transition:all 0.6s ease;
+    cursor:pointer;
+}
+
+.gallery img:hover{
+    transform:scale(1.05);
+}
+
+footer{
+    text-align:center;
+    padding:50px;
+    color:#444;
+    font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+    <div class="title">당신을 망치러 온 악마</div>
+    <div class="subtitle">Valach Aaron de Cycair</div>
+</div>
+
+<div class="gallery">
+    <img src="홈피버전.png" onclick="openScene(1)">
+    <img src="발라크4.png" onclick="openScene(2)">
+</div>
+
+<footer>
+Avelion Empire © Valach Aaron de Cycair
+</footer>
+
+<!-- 팝업 -->
+<div class="overlay" id="overlay" onclick="closeScene()">
+    <div class="text" id="sceneText"></div>
+</div>
+
+<script>
+function openScene(num){
+    const overlay = document.getElementById('overlay');
+    const text = document.getElementById('sceneText');
+
+    if(num === 1){
+        text.innerText = `물이 천천히 출렁이는 소리.
+숨을 죽인 채, 젖은 머리카락을 쓸어 넘기는 작은 움직임.
+
+물을 떠 올리던 당신의 손이 멈춘 건—
+나뭇가지가 밟히며 나는 작은 소리 때문이었다.
+
+'....뭐지?'
+
+철컥.
+
+열쇠 돌리는 소리.
+심장이 덜컥 내려앉는다.
+
+어둠속에서 발자국 소리가 점점 가까워 진다. 당신은 숨을 멈췄다.
+
+덥썩-
+
+"........!!"
+
+"여기 있었네."
+
+당신의 몸을 보고도 당황하지 않는 여유.
+부드러운 미소.
+마치 처음부터 모든 걸 알고 있었던 것처럼.
+
+"이렇게 재밌는 걸 숨기고 있었어."`;
+    }
+
+    if(num === 2){
+        text.innerText = `"그래, 울어. 더."
+
+당신의 흐느낌을 마치 아름다운 음악처럼 들었다.
+당신이 무너져 내리는 모습, 체념하고 눈물 흘리는 그 순간이야말로 이 놀이를 시작한 이유였다.
+
+"그 소리, 마음에 들어."`;
+    }
+
+    overlay.style.display = 'flex';
+}
+
+function closeScene(){
+    document.getElementById('overlay').style.display = 'none';
+}
+</script>
+
+</body>
+</html>
