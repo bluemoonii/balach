@@ -16,33 +16,61 @@ body{
     overflow-x:hidden;
 }
 
-/* 심장 박동 암전 */
-@keyframes heartbeat {
-    0%,100%{opacity:0.85;}
-    50%{opacity:1;}
+/* 🔥 BGM 심장박동 효과 */
+@keyframes pulseDark {
+    0%,100%{background-color:#0a0a0c;}
+    50%{background-color:#120c0c;}
 }
 
+/* 🔥 오버레이 (스크롤 가능) */
 .overlay{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.92);
-    display:none;
+    height:100vh;
+    background:rgba(0,0,0,0.96);
+
+    display:flex;
     justify-content:center;
-    align-items:center;
+    align-items:flex-start;
+
+    padding:100px 30px 80px 30px;
     text-align:center;
-    padding:40px;
+
+    font-size:clamp(14px,3.5vw,17px);
+    line-height:2;
+    letter-spacing:0.4px;
+
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+
+    opacity:0;
+    pointer-events:none;
+    transition:0.4s;
     z-index:999;
-    animation:heartbeat 2s infinite;
-    cursor:pointer;
 }
 
-.overlay .text{
-    max-width:900px;
-    font-size:26px;
-    line-height:2.2;
-    color:#d8c3a0;
-    white-space:pre-line;
+.overlay.show{
+    opacity:1;
+    pointer-events:auto;
 }
+
+.overlay-content{
+    max-width:760px;
+    width:100%;
+    color:#d8c3a0;
+}
+
+/* 🔥 노래 제목 (붉은 glow) */
+.song-title{
+    margin-bottom:40px;
+    font-family:'Cinzel',serif;
+    letter-spacing:4px;
+    cursor:pointer;
+    color:#c9a97a;
+    text-shadow:0 0 12px rgba(160,0,0,0.6);
+    opacity:0.85;
+}
+.song-title:hover{opacity:1;}
 
 .hero{
     height:100vh;
@@ -102,96 +130,215 @@ footer{
 
 <body>
 
-<div class="hero">
+<div class="hero" onclick="startBGM()">
     <div class="title">당신을 망치러 온 악마</div>
     <div class="subtitle">Valach Aaron de Cycair</div>
-
-    <div style="
-        margin-top:60px;
-        max-width:900px;
-        line-height:2.2;
-        font-size:26px;
-        color:#d8c3a0;
-        text-align:center;
-        font-family:'Cormorant Garamond','Noto Serif KR',serif;
-    ">
-        그에게 감정이라는 것이 있기는 할까?<br><br>
-
-        당신은 그의 손 안의 장난감,<br>
-        혹은 독 안에 든 쥐.<br><br>
-
-        과연 벗어날 수 있을까.<br><br>
-
-        <i>"어디 한 번 도망쳐 봐.<br>
-        어차피 내 손바닥 안이니까."</i>
-    </div>
 </div>
 
 <div class="gallery">
-    <img src="홈피버전.png" onclick="openScene(1)">
-    <img src="발라크4.png" onclick="openScene(2)">
+    <img src="홈피버전.png" onclick="openScene(1,'music/balak_theme1.mp3')">
+    <img src="발라크4.png" onclick="openScene(2,'music/balak_theme2.mp3')">
 </div>
 
 <footer>
 Avelion Empire © Valach Aaron de Cycair
 </footer>
 
-<!-- 팝업 -->
+<!-- 오버레이 -->
 <div class="overlay" id="overlay" onclick="closeScene()">
-    <div class="text" id="sceneText"></div>
+    <div class="overlay-content">
+        <div class="song-title" onclick="downloadMusic(event)">BALAK THEME</div>
+        <div id="sceneText"></div>
+    </div>
 </div>
 
+<audio id="bgm" loop>
+  <source src="music/bgm.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="characterAudio"></audio>
+
 <script>
-function openScene(num){
-    const overlay = document.getElementById('overlay');
-    const text = document.getElementById('sceneText');
 
-    if(num === 1){
-        text.innerText = `물이 천천히 출렁이는 소리.
-숨을 죽인 채, 젖은 머리카락을 쓸어 넘기는 작은 움직임.
+const bgm=document.getElementById("bgm");
+const characterAudio=document.getElementById("characterAudio");
+let currentTrack="";
+let bgmStarted=false;
 
-물을 떠 올리던 당신의 손이 멈춘 건—
-나뭇가지가 밟히며 나는 작은 소리 때문이었다.
+function startBGM(){
+    if(!bgmStarted){
+        bgm.volume=0.3;
+        bgm.play();
+        bgmStarted=true;
+    }
+}
 
-'....뭐지?'
+function openScene(num,music){
+    const overlay=document.getElementById('overlay');
+    const text=document.getElementById('sceneText');
 
-철컥.
+    overlay.classList.add('show');
 
-열쇠 돌리는 소리.
-심장이 덜컥 내려앉는다.
+    bgm.pause(); // 🔥 완전 정지
 
-어둠속에서 발자국 소리가 점점 가까워 진다. 당신은 숨을 멈췄다.
+    characterAudio.pause();
+    characterAudio.currentTime=0;
 
-덥썩-
+    currentTrack=music;
+    characterAudio.src=music;
+    characterAudio.volume=0.8;
 
-"........!!"
+    // 🔥 0.2초 정적 연출
+    setTimeout(()=>{ characterAudio.play(); },200);
 
-"여기 있었네."
+    if(num===1){
+        text.innerText=`Cat and Mouse
 
-당신의 몸을 보고도 당황하지 않는 여유.
-부드러운 미소.
-마치 처음부터 모든 걸 알고 있었던 것처럼.
+One step, two steps, you look around
+(한 발, 두 발, 넌 주위를 둘러보지)
+Thinking you are safe and sound
+(안전하다고 착각하면서 말이야)
+I let the leash go loose and long
+(목줄을 아주 길고 느슨하게 풀어줄게)
+To make you feel like nothing's wrong
+(마치 아무 문제 없는 것처럼 느끼도록)
 
-"이렇게 재밌는 걸 숨기고 있었어."`;
+
+Do you feel the shadow creep?
+(그림자가 기어오는 게 느껴져?)
+While you are trying to fall asleep?
+(네가 잠들려 하는 그 순간에?)
+Closer... Closer...
+(가까이... 더 가까이...)
+Not yet.
+(아직 아냐.)
+
+GOTCHA!
+(잡았다!)
+Nowhere to run, the door is shut
+(도망칠 곳은 없어, 문은 닫혔어)
+I’ll tear the scream out of your gut!
+(네 뱃속에서 비명을 끄집어내 줄게!)
+My pretty toy, my bloody prize
+(나의 예쁜 장난감, 피 묻은 전리품)
+Look at the hunger in my eyes!
+(내 눈 속의 굶주림을 봐!)
+
+Did that scare you? My mistake.
+(놀랐나? 내 실수군.)
+Just a little game I make.
+(그저 내가 만든 작은 게임일 뿐이야.)
+Tremble, shake, it’s so divine
+(떨어봐, 전율해봐, 정말 황홀하군)
+Knowing that your breath is mine
+(네 숨결이 내 것이란 걸 아는 건)
+
+
+Tick... Tock...
+(째깍... 째깍...)
+Time is running out.
+(시간이 다 되어가네.)
+(Deep growl)
+Are you ready to be eaten?
+(잡해먹힐 준비는 됐나?)
+
+
+You are MINE!
+(넌 내 거야!)
+Break and shatter in my hand
+(내 손안에서 부서지고 깨져라)
+This is exactly what I planned!
+(이게 바로 내가 계획한 그대로야!)
+Don't close your eyes, endure the sting
+(눈 감지 마, 이 고통을 견뎌)
+You are just a puppet on my string!
+(넌 그저 내 실에 매달린 인형일 뿐!)
+
+Game over.`;
     }
 
-    if(num === 2){
-        text.innerText = `"그래, 울어. 더."
+    if(num===2){
+        text.innerText=`Midnight Command
 
-당신의 흐느낌을 마치 아름다운 음악처럼 들었다.
-당신이 무너져 내리는 모습, 체념하고 눈물 흘리는 그 순간이야말로 이 놀이를 시작한 이유였다.
+I see you smiling at Barian's side
+(바리안의 곁에서 웃고 있더군)
+A pretty picture, nowhere to hide
+(숨을 곳 없는 예쁜 그림이야)
+I smile back gently, I raise my glass
+(난 부드럽게 마주 웃으며 잔을 들어)
+Waiting for this sickening moment to pass
+(이 역겨운 순간이 지나가길 기다리며)
 
-"그 소리, 마음에 들어."`;
+Don't look at him! Look at me!
+(그 놈 보지 마! 날 봐!)
+Love me! No, don't touch me!
+(날 사랑해줘! 아니, 날 만지지 마!)
+I want to hurt you cause I'm in pain
+(내가 아프니까 널 아프게 할 거야)
+Running in circles inside my brain
+(내 머릿속을 뱅뱅 돌면서 말이야)
+
+
+I’m a monster with a child’s heart
+(난 아이의 심장을 가진 괴물이지)
+Tearing your beautiful soul apart
+(네 아름다운 영혼을 찢어발기며)
+If you love me, I’ll push you away
+(네가 날 사랑하면, 난 널 밀어낼 거야)
+But if you leave, I’ll make you stay!
+(하지만 네가 떠나면, 억지로라도 붙잡겠어!)
+It’s a broken game, I know, I know...
+(고장 난 게임이란 걸 알아, 나도 안다고...)
+
+
+You think I'm cruel? You think I'm bad?
+(내가 잔인해? 내가 나쁜 놈 같아?)
+You haven't seen me when I am mad
+(진짜 화난 모습은 아직 보지도 못했으면서)
+I bully you to see you cry
+(네가 우는 걸 보려고 널 괴롭히는 거야)
+To verify you won't say goodbye
+(네가 작별 인사를 안 할지 확인하려고)
+
+
+Shh... Listen carefully.
+(쉿... 잘 들어.)
+Tonight at 12.
+(오늘 밤 12시.)
+My bedroom.
+(내 침실로 와.)
+Don't be late.
+(늦지 마.)
+
+
+...Please come.
+(...제발 와줘.)`;
     }
-
-    overlay.style.display = 'flex';
 }
 
 function closeScene(){
-    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('overlay').classList.remove('show');
+
+    characterAudio.pause();
+    characterAudio.currentTime=0;
+
+    bgm.play();
+    bgm.volume=0.3;
 }
+
+function downloadMusic(e){
+    e.stopPropagation();
+    if(!currentTrack)return;
+
+    const link=document.createElement("a");
+    link.href=currentTrack;
+    link.download=currentTrack.split('/').pop();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 </script>
 
 </body>
 </html>
-
